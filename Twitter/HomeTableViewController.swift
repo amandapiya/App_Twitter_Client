@@ -10,19 +10,33 @@ import UIKit
 
 
 class HomeTableViewController: UITableViewController {
-
+    
     var tweetArray = [NSDictionary]()
     var numberOfTweet: Int!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         loadTweet()
+        
+        self.tableView.rowHeight = UITableView.automaticDimension
+        self.tableView.estimatedRowHeight = 150
+        
+        /*
+         numberOfTweets = 20
+         refresher.addTarget(self, action: #selector(loadTweetTable), for: .valueChanged)
+         self.tweetTable.refreshControl = refresher
+         self.loadTweetTable()
+         */
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(true)
     }
     
     func loadTweet(){
@@ -64,6 +78,8 @@ class HomeTableViewController: UITableViewController {
             cell.profileImageView.image = UIImage(data: imageData)
         }
         
+        cell.setFavorite(tweetArray[indexPath.row]["favorited"] as! Bool)
+        cell.tweetID = tweetArray[indexPath.row]["id"] as! Int
         return cell
     }
     
