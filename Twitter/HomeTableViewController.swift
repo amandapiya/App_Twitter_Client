@@ -13,21 +13,18 @@ class HomeTableViewController: UITableViewController {
     
     var tweetArray = [NSDictionary]()
     var numberOfTweet: Int!
+    let myRefreshControl = UIRefreshControl()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         loadTweet()
+
+        myRefreshControl.addTarget(self, action: #selector(loadTweet), for: .valueChanged)
+        tableView.refreshControl = myRefreshControl
         
         self.tableView.rowHeight = UITableView.automaticDimension
         self.tableView.estimatedRowHeight = 150
         
-        /*
-         numberOfTweets = 20
-         refresher.addTarget(self, action: #selector(loadTweetTable), for: .valueChanged)
-         self.tweetTable.refreshControl = refresher
-         self.loadTweetTable()
-         */
-
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -36,10 +33,11 @@ class HomeTableViewController: UITableViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(true)
+        super.viewDidAppear(animated)
+        self.loadTweet()
     }
     
-    func loadTweet(){
+    @objc func loadTweet(){
         
         let myUrl = "https://api.twitter.com/1.1/statuses/home_timeline.json"
         let myParams = ["count" : 10]
@@ -50,14 +48,13 @@ class HomeTableViewController: UITableViewController {
                         self.tweetArray.append(tweet)
                     }
                     self.tableView.reloadData()
+            self.refreshControl?.endRefreshing()
+            
                 }, failure: { (Error) in
                     print("Could not retrieve tweets")
                 })
         
     }
-    
-    
-    
 
     @IBAction func onLogout(_ sender: Any) {
         TwitterAPICaller.client?.logout()
